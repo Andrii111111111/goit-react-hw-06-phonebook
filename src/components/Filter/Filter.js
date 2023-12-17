@@ -1,19 +1,13 @@
-import { FilterWraper } from './Filter.styles';
+import React from 'react';
+import { Label, Input, CenteredContainer } from './Filter.style'
 
-export const Filter = ({ filters, onChengeFilter }) => {
-  return (
-    <FilterWraper>
-      <h2>Contacts</h2>
-      <p>Find contacts by name</p>
-      <input
-        type="text"
-        value={filters}
-        onChange={evt => {
-          onChengeFilter(evt.target.value);
-        }}
-        name="filter"
-        required
-      />
-    </FilterWraper>
-  );
-};
+const Filter = ({ value, onChange }) => (
+    <CenteredContainer>
+        <Label>
+            Filter by name:
+            <Input type="text" value={value} onChange={onChange} />
+        </Label>
+    </CenteredContainer>
+);
+
+export default Filter;

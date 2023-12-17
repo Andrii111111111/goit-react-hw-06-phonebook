@@ -1,75 +1,68 @@
-/* eslint-disable array-callback-return */
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addContact, deleteContact } from '../redux/contactsSlice';
+import { setFilter } from '../redux/filterSlice';
+import ContactForm from './ContactForm/ContactForm';
+import ContactList from './ContactList/ContactList';
+import Filter from './Filter/Filter';
+import { HeaderTitle, ContactsTitle } from './Header.style';
+import { persistor } from '../redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
-import { nanoid } from 'nanoid';
-import { Form } from "./Form/Form";
-import { useState, useEffect } from "react";
-import { ContactList } from './ContactList/ContactList';
-import { Filter } from './Filter/Filter';
+export function App() {
+  const contacts = useSelector(state => state.contacts);
+  const filter = useSelector(state => state.filter);
+  const dispatch = useDispatch();
 
+  const isNameAlreadyExists = name => {
+    const lowerCaseName = name.toLowerCase();
+    return contacts.some(
+      contact => contact.name.toLowerCase() === lowerCaseName
+    );
+  };
 
-export const App = () => {
-  const [contacts, setContacts] = useState([])
-  const [filter, setFilter] = useState('')
- 
-  
-  const deleteContacs = (id) => {
-    setContacts((prevContacts) => prevContacts.filter(contact => contact.id !== id))
-  }
+  const addNewContact = newContact => {
+    dispatch(addContact(newContact));
+  };
 
-  const chengeFilter = (newFilter) => {
-    setFilter(newFilter)
-  }
+  const removeContact = id => {
+    dispatch(deleteContact(id));
+  };
 
-  const formSubmitEnd = (data) => {
-    if (contacts.find(({ name }) =>
-      name.toLowerCase() === data.name.toLowerCase())) {
-      alert(`${data.name} is already in contacts.`);
-      return;
-    }
-    setContacts((prevContacts) => [...prevContacts, { ...data, id: nanoid() }])
-  }
-  
-  useEffect(() => {
-    const savedContacts = localStorage.getItem('contacts');
-    if (savedContacts !== null) {
-      setContacts(JSON.parse(savedContacts))
-    }
-  }, [])
+  const handleFilterChange = event => {
+    dispatch(setFilter(event.target.value));
+  };
 
+  const getFilteredContacts = () => {
+    const normalizedFilter = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+  };
 
-  useEffect((setContacts) => {
+  const filteredContacts = getFilteredContacts();
 
-    if (setContacts !== contacts) {
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-    }
-  }, [contacts, setContacts])
-
-
-
- 
-  const contactFilter = () => {const filtred = contacts.filter(contact=> {
- 
-    if (contact.name.toLowerCase().includes(filter.toLowerCase())) {
-      return contact
-    }
-
-  })
-    return filtred
-}
-
+  useEffect(() => {}, []);
 
   return (
-   
-    <>
-      <Form onSubmit={formSubmitEnd} />
-      <Filter filter={setFilter} onChengeFilter={chengeFilter}/>
-      <ContactList contacts={contactFilter}
-        deleteCon = {deleteContacs}
-      />
-    </>)
-
-
+    <div className="App">
+      <span>
+        <HeaderTitle>Телефонна книга</HeaderTitle>
+      </span>
+      <PersistGate loading={null} persistor={persistor}>
+        <ContactForm
+          onSubmit={addNewContact}
+          isNameAlreadyExists={isNameAlreadyExists}
+        />
+        <span>
+          <ContactsTitle>Контакти</ContactsTitle>
+        </span>
+        <Filter value={filter} onChange={handleFilterChange} />
+        <ContactList
+          contacts={filteredContacts}
+          onDeleteContact={removeContact}
+        />
+      </PersistGate>
+    </div>
+  );
 }
-
-
-
