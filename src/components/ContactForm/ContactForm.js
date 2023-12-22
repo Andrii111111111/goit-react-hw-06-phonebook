@@ -23,6 +23,8 @@ export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
+  const onSubmit = useSelector(state => state.contacts.contacts);
+  console.log(onSubmit);
   const handleChange = input => {
     switch (input.name) {
       case 'name':
@@ -39,7 +41,7 @@ export const ContactForm = () => {
     event.preventDefault();
     setName('');
     setNumber('');
-    const { name, number } = this.state;
+    // const { name, number } = this.state;
 
     // Валідація
     ValidationSchema.validate({ name, number })
@@ -55,7 +57,7 @@ export const ContactForm = () => {
           number,
         };
 
-        this.props.onSubmit(newContact);
+        onSubmit(newContact);
       })
       .catch(error => {
         alert(error.message);
