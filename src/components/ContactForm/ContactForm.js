@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import { nanoid } from 'nanoid';
-import { Form, Label, Input, Button } from './ContactForm.style';
+import { Form, Label, Input, Button } from './ContactForm.style.js';
 import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice.js';
 
 const ValidationSchema = Yup.object().shape({
   name: Yup.string()
@@ -20,44 +21,24 @@ const ValidationSchema = Yup.object().shape({
 });
 
 export const ContactForm = () => {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-
-  const onSubmit = useSelector(state => state.contacts.contacts);
-  console.log(onSubmit);
-  const handleChange = input => {
-    switch (input.name) {
-      case 'name':
-        setName(input.value);
-        break;
-      case 'number':
-        setNumber(input.value);
-        break;
-      default:
-    }
-  };
+  const dispatch = useDispatch();
 
   const handleSubmit = event => {
     event.preventDefault();
-    setName('');
-    setNumber('');
-    // const { name, number } = this.state;
+    const { name, number } = event.target;
 
-    // Валідація
-    ValidationSchema.validate({ name, number })
+    // валидация
+    ValidationSchema.validate({ name: name.value, number: number.value })
       .then(() => {
-        if (this.props.isNameAlreadyExists(name)) {
-          alert(`${name} is already in Contacts`);
-          return;
-        }
-
         const newContact = {
           id: nanoid(),
-          name,
-          number,
+          name: name.value,
+          number: number.value,
         };
 
-        onSubmit(newContact);
+        dispatch(addContact(newContact));
+        name.value = '';
+        number.value = '';
       })
       .catch(error => {
         alert(error.message);
@@ -67,28 +48,14 @@ export const ContactForm = () => {
   return (
     <Form onSubmit={handleSubmit}>
       <Label>
-        Name:
-        <Input
-          type="text"
-          name="name"
-          value={name}
-          onChange={handleChange}
-          placeholder="Name Surname"
-          required
-        />
+        name:
+        <Input type="text" name="name" placeholder="name surname" required />
       </Label>
       <Label>
-        Phone Number:
-        <Input
-          type="tel"
-          name="number"
-          value={number}
-          onChange={handleChange}
-          placeholder="xxx-xx-xx"
-          required
-        />
+        phone number:
+        <Input type="tel" name="number" placeholder="xxx-xx-xx" required />
       </Label>
-      <Button type="submit">Add Contact</Button>
+      <Button type="submit">add contact</Button>
     </Form>
   );
 };

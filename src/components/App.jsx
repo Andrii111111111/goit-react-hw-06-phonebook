@@ -51,7 +51,7 @@ export function App() {
       </span>
       <PersistGate loading={null} persistor={persistor}>
         <ContactForm
-           onSubmit={addNewContact}
+          onSubmit={addNewContact}
           isNameAlreadyExists={isNameAlreadyExists}
         />
         <span>
