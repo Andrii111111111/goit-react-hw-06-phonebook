@@ -20,7 +20,7 @@ const ValidationSchema = Yup.object().shape({
     .required('Phone number is required'),
 });
 
-export const ContactForm = () => {
+export const ContactForm = ({ onSubmit, isNameAlreadyExists }) => {
   const dispatch = useDispatch();
 
   const handleSubmit = event => {
