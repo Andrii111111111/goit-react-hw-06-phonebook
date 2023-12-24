@@ -42,13 +42,13 @@ export const App = () => {
 
   const renderHeader = () => (
     <span>
-      <HeaderTitle>Телефонная книга</HeaderTitle>
+      <HeaderTitle>Телефонна книга</HeaderTitle>
     </span>
   );
 
   const renderContactsTitle = () => (
     <span>
-      <ContactsTitle>Контакты</ContactsTitle>
+      <ContactsTitle>Контакти</ContactsTitle>
     </span>
   );
 
