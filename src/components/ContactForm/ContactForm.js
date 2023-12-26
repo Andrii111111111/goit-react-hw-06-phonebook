@@ -28,7 +28,6 @@ export const ContactForm = () => {
     event.preventDefault();
     const { name, number } = event.target;
 
-    // валидация
     ValidationSchema.validate({ name: name.value, number: number.value })
       .then(() => {
         const isNameExists = contacts.some(
