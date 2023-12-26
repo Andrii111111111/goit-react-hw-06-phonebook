@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
 import { Form, Label, Input, Button } from './ContactForm.style.js';
 import * as Yup from 'yup';
@@ -20,8 +20,9 @@ const ValidationSchema = Yup.object().shape({
     .required('Phone number is required'),
 });
 
-export const ContactForm = ({ onSubmit, isNameAlreadyExists }) => {
+export const ContactForm = () => {
   const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts);
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -30,6 +31,15 @@ export const ContactForm = ({ onSubmit, isNameAlreadyExists }) => {
     // валидация
     ValidationSchema.validate({ name: name.value, number: number.value })
       .then(() => {
+        const isNameExists = contacts.some(
+          contact => contact.name.toLowerCase() === name.value.toLowerCase()
+        );
+
+        if (isNameExists) {
+          alert(`${name.value} is already in Contacts`);
+          return;
+        }
+
         const newContact = {
           id: nanoid(),
           name: name.value,
